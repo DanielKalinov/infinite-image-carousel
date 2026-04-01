@@ -5,7 +5,7 @@ const limit = 6;
 
 export default function Carousel() {
   const [images, setImages] = useState<Image[]>([]);
-  const [count, setCount] = useState(1);
+  const [currentIndex, setCurrentIndex] = useState(1);
 
   const carouselInnerRef = useRef<HTMLDivElement | null>(null);
 
@@ -15,9 +15,9 @@ export default function Carousel() {
 
   useEffect(() => {
     if (carouselInnerRef.current) {
-      carouselInnerRef.current.style.transform = `translateX(-${1200 * count}px)`;
+      carouselInnerRef.current.style.transform = `translateX(-${1200 * currentIndex}px)`;
     }
-  }, [count]);
+  }, [currentIndex]);
 
   function getImages() {
     fetch(`https://picsum.photos/v2/list?limit=${limit}`)
@@ -46,21 +46,21 @@ export default function Carousel() {
 
     // Enable transition for the move
     carouselInnerRef.current.style.transition = "transform 0.5s ease-in-out";
-    setCount((prev) => prev + direction);
+    setCurrentIndex((prev) => prev + direction);
   }
 
   function handleTransitionEnd() {
     if (!carouselInnerRef.current) return;
 
     // Reset jump logic
-    if (count === 0) {
+    if (currentIndex === 0) {
       // Jump from cloned-last to real-last
       carouselInnerRef.current.style.transition = "none";
-      setCount(images.length - 2);
-    } else if (count === images.length - 1) {
+      setCurrentIndex(images.length - 2);
+    } else if (currentIndex === images.length - 1) {
       // Jump from cloned-first to real-first
       carouselInnerRef.current.style.transition = "none";
-      setCount(1);
+      setCurrentIndex(1);
     }
   }
 
