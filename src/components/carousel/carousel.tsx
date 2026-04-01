@@ -1,14 +1,23 @@
-import { useEffect, useRef, useState, type WheelEvent } from "react";
+import { useEffect, useRef, type WheelEvent } from "react";
 import Bullets from "./bullets";
 import { useImages } from "../../hooks/use-images";
+import { CarouselProvider, useCarousel } from "../../context/carousel-context";
 
 type CarouselProps = {
   animDuration?: number;
 };
 
-export default function Carousel({ animDuration = 500 }: CarouselProps) {
-  const [currentIndex, setCurrentIndex] = useState(1);
-  const [isTransitioning, setIsTransitioning] = useState(false);
+export default function CarouselWrapper() {
+  return (
+    <CarouselProvider>
+      <Carousel />
+    </CarouselProvider>
+  );
+}
+
+function Carousel({ animDuration = 500 }: CarouselProps) {
+  const { currentIndex, isTransitioning, setCurrentIndex, setIsTransitioning } =
+    useCarousel();
 
   const carouselInnerRef = useRef<HTMLDivElement | null>(null);
 
