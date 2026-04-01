@@ -76,8 +76,8 @@ export default function Carousel() {
               transform: `translateX(${-1200 * currentIndex}px)`,
             }}
           >
-            {images.map(({ id, download_url, cloned }) => (
-              <img key={cloned ? `cloned-${id}` : id} src={download_url} />
+            {images.map(({ id, download_url }) => (
+              <img key={id} src={download_url} />
             ))}
           </div>
           <div

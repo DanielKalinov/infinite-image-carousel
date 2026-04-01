@@ -5,5 +5,4 @@ export type Image = {
   height: number;
   url: string;
   download_url: string;
-  cloned?: boolean;
 };
