@@ -26,10 +26,6 @@ export default function Carousel() {
         const lastItem = { ...data[data.length - 1], id: "0" };
         const firstItem = { ...data[0], id: (data.length + 1).toString() };
 
-        if (carouselInnerRef.current) {
-          carouselInnerRef.current.style.transform = `translateX(-${1200 * 1}px)`;
-        }
-
         setImages([
           lastItem,
           ...data.map((item, index) => ({
@@ -77,6 +73,7 @@ export default function Carousel() {
             onTransitionEnd={handleTransitionEnd}
             style={{
               width: images.length * 500,
+              transform: `translateX(${-1200 * currentIndex}px)`,
             }}
           >
             {images.map(({ id, download_url, cloned }) => (
