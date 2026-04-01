@@ -3,7 +3,7 @@ import Carousel from "./components/carousel/carousel";
 import { useImages } from "./hooks/use-images";
 
 function App() {
-  const { images } = useImages();
+  const { images } = useImages(6);
 
   return (
     <div className="container">

@@ -98,7 +98,7 @@ function Carousel({
           </div>
         </div>
 
-        {bullets && <Bullets goToSlide={goToSlide} />}
+        {bullets && <Bullets length={images.length} goToSlide={goToSlide} />}
       </>
     )
   );
