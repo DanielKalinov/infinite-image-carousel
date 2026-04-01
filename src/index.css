@@ -4,6 +4,41 @@
   box-sizing: border-box;
 }
 
+html,
+body,
+#root {
+  height: 100%;
+}
+
 body {
   font-family: "Roboto", sans-serif;
+}
+
+/* img {
+  max-width: 100%;
+  height: auto;
+} */
+
+.no-scrollbar {
+  scrollbar-width: none; /* Firefox */
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Edge */
+}
+
+.carousel {
+  overflow-x: hidden;
+}
+
+.carousel-inner {
+  display: flex;
+  /* transition: all 0.2s ease-in-out; */
+}
+
+.carousel-inner img {
+  flex-shrink: 0;
+  width: 1200px;
+  height: 500px;
+  object-fit: cover;
 }
