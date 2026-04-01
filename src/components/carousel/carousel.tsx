@@ -58,7 +58,7 @@ function Carousel({ animDuration = 500 }: CarouselProps) {
   const handleNext = () => handleCarousel(1);
   const handlePrev = () => handleCarousel(-1);
 
-  const goToSlide = (index: number) => {
+  function goToSlide(index: number) {
     if (!carouselInnerRef.current || isTransitioning) return;
 
     setIsTransitioning(true);
@@ -66,7 +66,7 @@ function Carousel({ animDuration = 500 }: CarouselProps) {
     carouselInnerRef.current.style.transition = `transform ${animDuration}ms ease-in-out`;
 
     setCurrentIndex(index);
-  };
+  }
 
   function handleWheel(event: WheelEvent<HTMLDivElement>) {
     if (isTransitioning) return;
