@@ -69,7 +69,6 @@ export default function Carousel() {
             className="carousel-inner"
             onTransitionEnd={handleTransitionEnd}
             style={{
-              width: images.length * 500,
               transform: `translateX(${-1200 * currentIndex}px)`,
             }}
           >
