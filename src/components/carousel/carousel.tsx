@@ -6,6 +6,7 @@ import type { Image } from "../../types/image";
 type CarouselProps = {
   images?: Image[];
   bullets?: boolean;
+  slideOnScroll?: boolean;
   animDuration?: number;
 };
 
@@ -20,6 +21,7 @@ export default function CarouselWrapper(props: CarouselProps) {
 function Carousel({
   images = [],
   bullets = true,
+  slideOnScroll = true,
   animDuration = 500,
 }: CarouselProps) {
   const { currentIndex, isTransitioning, setCurrentIndex, setIsTransitioning } =
@@ -73,7 +75,7 @@ function Carousel({
   }
 
   function handleWheel(event: WheelEvent<HTMLDivElement>) {
-    if (isTransitioning) return;
+    if (!slideOnScroll || isTransitioning) return;
 
     setIsTransitioning(true);
 
