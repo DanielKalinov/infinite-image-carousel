@@ -5,6 +5,7 @@ import type { Image } from "../../types/image";
 
 type CarouselProps = {
   images?: Image[];
+  bullets?: boolean;
   animDuration?: number;
 };
 
@@ -16,7 +17,11 @@ export default function CarouselWrapper(props: CarouselProps) {
   );
 }
 
-function Carousel({ images = [], animDuration = 500 }: CarouselProps) {
+function Carousel({
+  images = [],
+  bullets = true,
+  animDuration = 500,
+}: CarouselProps) {
   const { currentIndex, isTransitioning, setCurrentIndex, setIsTransitioning } =
     useCarousel();
 
@@ -92,7 +97,8 @@ function Carousel({ images = [], animDuration = 500 }: CarouselProps) {
             ))}
           </div>
         </div>
-        <Bullets goToSlide={goToSlide} />
+
+        {bullets && <Bullets goToSlide={goToSlide} />}
       </>
     )
   );
