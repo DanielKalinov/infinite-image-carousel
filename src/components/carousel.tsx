@@ -6,6 +6,7 @@ const limit = 6;
 export default function Carousel() {
   const [images, setImages] = useState<Image[]>([]);
   const [currentIndex, setCurrentIndex] = useState(1);
+  const [isTransitioning, setIsTransitioning] = useState(false);
 
   const carouselInnerRef = useRef<HTMLDivElement | null>(null);
 
@@ -37,6 +38,8 @@ export default function Carousel() {
   function handleCarousel(direction: 1 | -1) {
     if (!carouselInnerRef.current) return;
 
+    setIsTransitioning(true);
+
     // Enable transition for the move
     carouselInnerRef.current.style.transition = "transform 0.5s ease-in-out";
     setCurrentIndex((prev) => prev + direction);
@@ -48,13 +51,14 @@ export default function Carousel() {
     // Reset jump logic
     if (currentIndex === 0) {
       // Jump from cloned-last to real-last
-      carouselInnerRef.current.style.transition = "none";
       setCurrentIndex(images.length - 2);
     } else if (currentIndex === images.length - 1) {
       // Jump from cloned-first to real-first
-      carouselInnerRef.current.style.transition = "none";
       setCurrentIndex(1);
     }
+
+    carouselInnerRef.current.style.transition = "none";
+    setIsTransitioning(false);
   }
 
   const handleNext = () => handleCarousel(1);
@@ -86,6 +90,7 @@ export default function Carousel() {
               style={{
                 padding: 24,
                 cursor: "pointer",
+                pointerEvents: isTransitioning ? "none" : "auto",
               }}
               onClick={handlePrev}
             >
@@ -95,6 +100,7 @@ export default function Carousel() {
               style={{
                 padding: 24,
                 cursor: "pointer",
+                pointerEvents: isTransitioning ? "none" : "auto",
               }}
               onClick={handleNext}
             >
