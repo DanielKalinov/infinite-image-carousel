@@ -18,26 +18,3 @@ body {
   max-width: 100%;
   height: auto;
 } */
-
-.no-scrollbar {
-  scrollbar-width: none; /* Firefox */
-}
-
-.no-scrollbar::-webkit-scrollbar {
-  display: none; /* Chrome, Safari, Edge */
-}
-
-.carousel {
-  overflow-x: hidden;
-}
-
-.carousel-inner {
-  display: flex;
-}
-
-.carousel-inner img {
-  flex-shrink: 0;
-  width: 1200px;
-  height: 500px;
-  object-fit: cover;
-}

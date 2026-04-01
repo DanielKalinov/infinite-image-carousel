@@ -65,8 +65,8 @@ export default function Carousel() {
   const handlePrev = () => handleCarousel(-1);
 
   return (
-    <>
-      {images.length > 0 && (
+    images.length > 0 && (
+      <>
         <div className="carousel no-scrollbar">
           <div
             ref={carouselInnerRef}
@@ -80,35 +80,21 @@ export default function Carousel() {
               <img key={id} src={download_url} />
             ))}
           </div>
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-            }}
-          >
-            <div
-              style={{
-                padding: 24,
-                cursor: "pointer",
-                pointerEvents: isTransitioning ? "none" : "auto",
-              }}
-              onClick={handlePrev}
-            >
-              Prev
-            </div>
-            <div
-              style={{
-                padding: 24,
-                cursor: "pointer",
-                pointerEvents: isTransitioning ? "none" : "auto",
-              }}
-              onClick={handleNext}
-            >
-              Next
-            </div>
-          </div>
         </div>
-      )}
-    </>
+        <div className="carousel-bullets">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <div
+              key={i}
+              className="carousel-bullet"
+              onClick={() => setCurrentIndex(i + 1)}
+            >
+              <div
+                className={`carousel-bullet-inner${currentIndex - 1 === i ? " active" : ""}`}
+              />
+            </div>
+          ))}
+        </div>
+      </>
+    )
   );
 }
