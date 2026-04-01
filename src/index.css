@@ -4,6 +4,17 @@
   box-sizing: border-box;
 }
 
+html,
+body,
+#root {
+  height: 100%;
+}
+
 body {
   font-family: "Roboto", sans-serif;
 }
+
+/* img {
+  max-width: 100%;
+  height: auto;
+} */
