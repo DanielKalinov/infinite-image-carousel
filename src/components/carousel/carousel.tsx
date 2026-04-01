@@ -92,7 +92,7 @@ function Carousel({ images = [], animDuration = 500 }: CarouselProps) {
             ))}
           </div>
         </div>
-        <Bullets currentIndex={currentIndex} goToSlide={goToSlide} />
+        <Bullets goToSlide={goToSlide} />
       </>
     )
   );

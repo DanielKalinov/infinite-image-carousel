@@ -1,9 +1,12 @@
+import { useCarousel } from "../../context/carousel-context";
+
 type BulletsProps = {
-  currentIndex: number;
   goToSlide: (index: number) => void;
 };
 
-export default function Bullets({ currentIndex, goToSlide }: BulletsProps) {
+export default function Bullets({ goToSlide }: BulletsProps) {
+  const { currentIndex } = useCarousel();
+
   return (
     <div className="carousel-bullets">
       {Array.from({ length: 6 }).map((_, i) => (
