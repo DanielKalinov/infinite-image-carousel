@@ -41,7 +41,7 @@ export default function Carousel() {
     setIsTransitioning(true);
 
     // Enable transition for the move
-    carouselInnerRef.current.style.transition = "transform 0.5s ease-in-out";
+    carouselInnerRef.current.style.transition = "transform 0.2s ease-in-out";
     setCurrentIndex((prev) => prev + direction);
   }
 
