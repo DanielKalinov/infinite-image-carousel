@@ -1,46 +1,24 @@
 import { useEffect, useRef, useState } from "react";
-import type { Image } from "../../types/image";
 import Bullets from "./bullets";
+import { useImages } from "../../hooks/use-images";
 
 type CarouselProps = {
-  limit?: number;
   animDuration?: number;
 };
 
-export default function Carousel({
-  limit = 10,
-  animDuration = 500,
-}: CarouselProps) {
-  const [images, setImages] = useState<Image[]>([]);
+export default function Carousel({ animDuration = 500 }: CarouselProps) {
   const [currentIndex, setCurrentIndex] = useState(1);
   const [isTransitioning, setIsTransitioning] = useState(false);
 
   const carouselInnerRef = useRef<HTMLDivElement | null>(null);
 
-  useEffect(() => {
-    getImages();
-  }, []);
+  const { images } = useImages(6);
 
   useEffect(() => {
     if (carouselInnerRef.current) {
       carouselInnerRef.current.style.transform = `translateX(-${1200 * currentIndex}px)`;
     }
   }, [currentIndex]);
-
-  function getImages() {
-    fetch(`https://picsum.photos/v2/list?limit=${limit}`)
-      .then((res) => res.json())
-      .then((data: Image[]) => {
-        const lastItem = { ...data[data.length - 1], id: "0" };
-        const middleItems = data.map((item, index) => ({
-          ...item,
-          id: (index + 1).toString(),
-        }));
-        const firstItem = { ...data[0], id: (data.length + 1).toString() };
-
-        setImages([lastItem, ...middleItems, firstItem]);
-      });
-  }
 
   function handleCarousel(direction: 1 | -1) {
     if (!carouselInnerRef.current) return;
