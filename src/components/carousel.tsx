@@ -24,16 +24,13 @@ export default function Carousel() {
       .then((res) => res.json())
       .then((data: Image[]) => {
         const lastItem = { ...data[data.length - 1], id: "0" };
+        const middleItems = data.map((item, index) => ({
+          ...item,
+          id: (index + 1).toString(),
+        }));
         const firstItem = { ...data[0], id: (data.length + 1).toString() };
 
-        setImages([
-          lastItem,
-          ...data.map((item, index) => ({
-            ...item,
-            id: (index + 1).toString(),
-          })),
-          firstItem,
-        ]);
+        setImages([lastItem, ...middleItems, firstItem]);
       });
   }
 
