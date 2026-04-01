@@ -9,6 +9,16 @@ export default function Carousel() {
 
   const carouselInnerRef = useRef<HTMLDivElement | null>(null);
 
+  useEffect(() => {
+    getImages();
+  }, []);
+
+  useEffect(() => {
+    if (carouselInnerRef.current) {
+      carouselInnerRef.current.style.transform = `translateX(-${1200 * count}px)`;
+    }
+  }, [count]);
+
   function getImages() {
     fetch(`https://picsum.photos/v2/list?limit=${limit}`)
       .then((res) => res.json())
@@ -31,27 +41,28 @@ export default function Carousel() {
       });
   }
 
-  useEffect(() => {
-    getImages();
-  }, []);
+  function handleCarousel(direction: 1 | -1) {
+    if (!carouselInnerRef.current) return;
 
-  const handleCarousel = (direction: 1 | -1) =>
-    setCount((prev) => {
-      // Direction: 1 is next, -1 is back
-      const value = prev + direction;
+    // Enable transition for the move
+    carouselInnerRef.current.style.transition = "transform 0.5s ease-in-out";
+    setCount((prev) => prev + direction);
+  }
 
-      if (value === 0) return images.length - 2;
+  function handleTransitionEnd() {
+    if (!carouselInnerRef.current) return;
 
-      if (value > images.length - 1) return 2;
-
-      return value;
-    });
-
-  useEffect(() => {
-    if (carouselInnerRef.current) {
-      carouselInnerRef.current.style.transform = `translateX(-${1200 * count}px)`;
+    // Reset jump logic
+    if (count === 0) {
+      // Jump from cloned-last to real-last
+      carouselInnerRef.current.style.transition = "none";
+      setCount(images.length - 2);
+    } else if (count === images.length - 1) {
+      // Jump from cloned-first to real-first
+      carouselInnerRef.current.style.transition = "none";
+      setCount(1);
     }
-  }, [count]);
+  }
 
   const handleNext = () => handleCarousel(1);
   const handlePrev = () => handleCarousel(-1);
@@ -63,6 +74,7 @@ export default function Carousel() {
           <div
             ref={carouselInnerRef}
             className="carousel-inner"
+            onTransitionEnd={handleTransitionEnd}
             style={{
               width: images.length * 500,
             }}
