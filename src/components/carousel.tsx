@@ -65,7 +65,7 @@ export default function Carousel() {
   const handlePrev = () => handleCarousel(-1);
 
   return (
-    <div className="container">
+    <>
       {images.length > 0 && (
         <div className="carousel no-scrollbar">
           <div
@@ -109,6 +109,6 @@ export default function Carousel() {
           </div>
         </div>
       )}
-    </div>
+    </>
   );
 }
