@@ -1,19 +1,16 @@
 type BulletsProps = {
   currentIndex: number;
-  setCurrentIndex: React.Dispatch<React.SetStateAction<number>>;
+  goToSlide: (index: number) => void;
 };
 
-export default function Bullets({
-  currentIndex,
-  setCurrentIndex,
-}: BulletsProps) {
+export default function Bullets({ currentIndex, goToSlide }: BulletsProps) {
   return (
     <div className="carousel-bullets">
       {Array.from({ length: 6 }).map((_, i) => (
         <div
           key={i}
           className="carousel-bullet"
-          onClick={() => setCurrentIndex(i + 1)}
+          onClick={() => goToSlide(i + 1)}
         >
           <div
             className={`carousel-bullet-inner${currentIndex - 1 === i ? " active" : ""}`}

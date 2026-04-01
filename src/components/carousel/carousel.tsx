@@ -2,9 +2,15 @@ import { useEffect, useRef, useState } from "react";
 import type { Image } from "../../types/image";
 import Bullets from "./bullets";
 
-const limit = 6;
+type CarouselProps = {
+  limit?: number;
+  animDuration?: number;
+};
 
-export default function Carousel() {
+export default function Carousel({
+  limit = 10,
+  animDuration = 500,
+}: CarouselProps) {
   const [images, setImages] = useState<Image[]>([]);
   const [currentIndex, setCurrentIndex] = useState(1);
   const [isTransitioning, setIsTransitioning] = useState(false);
@@ -42,7 +48,7 @@ export default function Carousel() {
     setIsTransitioning(true);
 
     // Enable transition for the move
-    carouselInnerRef.current.style.transition = "transform 0.2s ease-in-out";
+    carouselInnerRef.current.style.transition = `transform ${animDuration}ms ease-in-out`;
     setCurrentIndex((prev) => prev + direction);
   }
 
@@ -65,6 +71,16 @@ export default function Carousel() {
   const handleNext = () => handleCarousel(1);
   const handlePrev = () => handleCarousel(-1);
 
+  const goToSlide = (index: number) => {
+    if (!carouselInnerRef.current || isTransitioning) return;
+
+    setIsTransitioning(true);
+
+    carouselInnerRef.current.style.transition = `transform ${animDuration}ms ease-in-out`;
+
+    setCurrentIndex(index);
+  };
+
   return (
     images.length > 0 && (
       <>
@@ -82,10 +98,7 @@ export default function Carousel() {
             ))}
           </div>
         </div>
-        <Bullets
-          currentIndex={currentIndex}
-          setCurrentIndex={setCurrentIndex}
-        />
+        <Bullets currentIndex={currentIndex} goToSlide={goToSlide} />
       </>
     )
   );
