@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type WheelEvent } from "react";
 import Bullets from "./bullets";
 import { useImages } from "../../hooks/use-images";
 
@@ -59,10 +59,18 @@ export default function Carousel({ animDuration = 500 }: CarouselProps) {
     setCurrentIndex(index);
   };
 
+  function handleWheel(event: WheelEvent<HTMLDivElement>) {
+    if (isTransitioning) return;
+
+    setIsTransitioning(true);
+
+    event.deltaY > 0 ? handlePrev() : handleNext();
+  }
+
   return (
     images.length > 0 && (
       <>
-        <div className="carousel no-scrollbar">
+        <div className="carousel no-scrollbar" onWheel={handleWheel}>
           <div
             ref={carouselInnerRef}
             className="carousel-inner"
