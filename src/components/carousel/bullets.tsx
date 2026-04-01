@@ -8,6 +8,14 @@ type BulletsProps = {
 export default function Bullets({ length = 10, goToSlide }: BulletsProps) {
   const { currentIndex } = useCarousel();
 
+  function getRealIndex() {
+    if (currentIndex === 0) return length - 3;
+    if (currentIndex === length - 1) return 0;
+    return currentIndex - 1;
+  }
+
+  const realIndex = getRealIndex();
+
   return (
     <div className="carousel-bullets">
       {Array.from({ length: length - 2 }).map((_, i) => (
@@ -17,7 +25,7 @@ export default function Bullets({ length = 10, goToSlide }: BulletsProps) {
           onClick={() => goToSlide(i + 1)}
         >
           <div
-            className={`carousel-bullet-inner${currentIndex - 1 === i ? " active" : ""}`}
+            className={`carousel-bullet-inner${realIndex === i ? " active" : ""}`}
           />
         </div>
       ))}
