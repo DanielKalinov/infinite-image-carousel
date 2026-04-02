@@ -11,8 +11,8 @@ import { CarouselProvider, useCarousel } from "../../context/carousel-context";
 import type { Image } from "../../types/image";
 
 type CarouselProps = {
-  containerRef?: RefObject<HTMLDivElement | null>;
-  images?: Image[];
+  containerRef: RefObject<HTMLDivElement | null>;
+  images: Image[];
   bullets?: boolean;
   slideOnScroll?: boolean;
   animDuration?: number;
