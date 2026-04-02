@@ -24,7 +24,7 @@
 .carousel-inner img {
   flex-shrink: 0;
   width: 1200px;
-  height: 500px;
+  max-height: 500px;
   object-fit: cover;
   padding: 12px;
 }

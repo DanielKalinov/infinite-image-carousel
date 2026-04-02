@@ -1,9 +1,16 @@
-import { useEffect, useRef, type WheelEvent } from "react";
+import {
+  useEffect,
+  useRef,
+  useState,
+  type RefObject,
+  type WheelEvent,
+} from "react";
 import Bullets from "./bullets";
 import { CarouselProvider, useCarousel } from "../../context/carousel-context";
 import type { Image } from "../../types/image";
 
 type CarouselProps = {
+  containerRef?: RefObject<HTMLDivElement | null>;
   images?: Image[];
   bullets?: boolean;
   slideOnScroll?: boolean;
@@ -19,6 +26,7 @@ export default function CarouselWrapper(props: CarouselProps) {
 }
 
 function Carousel({
+  containerRef,
   images = [],
   bullets = true,
   slideOnScroll = true,
@@ -26,12 +34,25 @@ function Carousel({
 }: CarouselProps) {
   const { currentIndex, isTransitioning, setCurrentIndex, setIsTransitioning } =
     useCarousel();
+  const [windowWidth, setWindowWidth] = useState<number | undefined>(undefined);
 
   const carouselInnerRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
+    // Capture initial width on mount
+    if (containerRef?.current) setWindowWidth(containerRef.current.clientWidth);
+
+    const handleResize = () =>
+      setWindowWidth(containerRef?.current?.clientWidth);
+
+    window.addEventListener("resize", handleResize);
+
+    return () => window.removeEventListener("resize", handleResize);
+  }, [containerRef]);
+
+  useEffect(() => {
     if (carouselInnerRef.current) {
-      carouselInnerRef.current.style.transform = `translateX(-${1200 * currentIndex}px)`;
+      carouselInnerRef.current.style.transform = `translateX(-${windowWidth && windowWidth * currentIndex}px)`;
     }
   }, [currentIndex]);
 
@@ -91,7 +112,7 @@ function Carousel({
             className="carousel-inner"
             onTransitionEnd={handleTransitionEnd}
             style={{
-              transform: `translateX(${-1200 * currentIndex}px)`,
+              transform: `translateX(${windowWidth && -windowWidth * currentIndex}px)`,
             }}
           >
             {images.map(({ id, download_url }) => (
