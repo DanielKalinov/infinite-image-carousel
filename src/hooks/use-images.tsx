@@ -3,12 +3,15 @@ import type { Image } from "../types/image";
 
 export function useImages(limit = 10) {
   const [images, setImages] = useState<Image[]>([]);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     getImages();
   }, []);
 
   function getImages() {
+    setLoading(true);
+
     fetch(`https://picsum.photos/v2/list?limit=${limit}`)
       .then((res) => res.json())
       .then((data: Image[]) => {
@@ -20,8 +23,9 @@ export function useImages(limit = 10) {
         const firstItem = { ...data[0], id: (data.length + 1).toString() };
 
         setImages([lastItem, ...middleItems, firstItem]);
-      });
+      })
+      .finally(() => setLoading(false));
   }
 
-  return { images };
+  return { images, loading };
 }

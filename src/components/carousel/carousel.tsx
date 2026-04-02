@@ -1,13 +1,22 @@
-import { useEffect, useRef, type WheelEvent } from "react";
+import {
+  useEffect,
+  useRef,
+  useState,
+  type CSSProperties,
+  type RefObject,
+  type WheelEvent,
+} from "react";
 import Bullets from "./bullets";
 import { CarouselProvider, useCarousel } from "../../context/carousel-context";
 import type { Image } from "../../types/image";
 
 type CarouselProps = {
-  images?: Image[];
+  containerRef: RefObject<HTMLDivElement | null>;
+  images: Image[];
   bullets?: boolean;
   slideOnScroll?: boolean;
   animDuration?: number;
+  imgProps?: CSSProperties;
 };
 
 export default function CarouselWrapper(props: CarouselProps) {
@@ -19,19 +28,34 @@ export default function CarouselWrapper(props: CarouselProps) {
 }
 
 function Carousel({
+  containerRef,
   images = [],
   bullets = true,
   slideOnScroll = true,
   animDuration = 500,
+  imgProps,
 }: CarouselProps) {
   const { currentIndex, isTransitioning, setCurrentIndex, setIsTransitioning } =
     useCarousel();
+  const [windowWidth, setWindowWidth] = useState<number | undefined>(undefined);
 
   const carouselInnerRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
+    // Capture initial width on mount
+    if (containerRef?.current) setWindowWidth(containerRef.current.clientWidth);
+
+    const handleResize = () =>
+      setWindowWidth(containerRef?.current?.clientWidth);
+
+    window.addEventListener("resize", handleResize);
+
+    return () => window.removeEventListener("resize", handleResize);
+  }, [containerRef]);
+
+  useEffect(() => {
     if (carouselInnerRef.current) {
-      carouselInnerRef.current.style.transform = `translateX(-${1200 * currentIndex}px)`;
+      carouselInnerRef.current.style.transform = `translateX(-${windowWidth && windowWidth * currentIndex}px)`;
     }
   }, [currentIndex]);
 
@@ -44,6 +68,9 @@ function Carousel({
     carouselInnerRef.current.style.transition = `transform ${animDuration}ms ease-in-out`;
     setCurrentIndex((prev) => prev + direction);
   }
+
+  const handleNext = () => handleCarousel(1);
+  const handlePrev = () => handleCarousel(-1);
 
   function handleTransitionEnd() {
     if (!carouselInnerRef.current) return;
@@ -60,9 +87,6 @@ function Carousel({
     carouselInnerRef.current.style.transition = "none";
     setIsTransitioning(false);
   }
-
-  const handleNext = () => handleCarousel(1);
-  const handlePrev = () => handleCarousel(-1);
 
   function goToSlide(index: number) {
     if (!carouselInnerRef.current || isTransitioning) return;
@@ -82,26 +106,26 @@ function Carousel({
     event.deltaY > 0 ? handlePrev() : handleNext();
   }
 
-  return (
-    images.length > 0 && (
-      <>
-        <div className="carousel no-scrollbar" onWheel={handleWheel}>
-          <div
-            ref={carouselInnerRef}
-            className="carousel-inner"
-            onTransitionEnd={handleTransitionEnd}
-            style={{
-              transform: `translateX(${-1200 * currentIndex}px)`,
-            }}
-          >
-            {images.map(({ id, download_url }) => (
-              <img key={id} src={download_url} />
-            ))}
-          </div>
-        </div>
+  if (!images.length) return <p className="centered">No images fetched.</p>;
 
-        {bullets && <Bullets length={images.length} goToSlide={goToSlide} />}
-      </>
-    )
+  return (
+    <>
+      <div className="carousel no-scrollbar" onWheel={handleWheel}>
+        <div
+          ref={carouselInnerRef}
+          className="carousel-inner"
+          onTransitionEnd={handleTransitionEnd}
+          style={{
+            transform: `translateX(${windowWidth && -windowWidth * currentIndex}px)`,
+          }}
+        >
+          {images.map(({ id, download_url }) => (
+            <img key={id} src={download_url} style={imgProps} />
+          ))}
+        </div>
+      </div>
+
+      {bullets && <Bullets length={images.length} goToSlide={goToSlide} />}
+    </>
   );
 }
