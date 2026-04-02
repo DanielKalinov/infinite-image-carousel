@@ -14,7 +14,7 @@ function App() {
       <Carousel
         containerRef={containerRef}
         images={images}
-        animDuration={1000}
+        animDuration={500}
         imgProps={{
           objectFit: "scale-down",
         }}
