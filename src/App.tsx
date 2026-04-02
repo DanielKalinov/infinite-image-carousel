@@ -13,6 +13,9 @@ function App() {
         containerRef={containerRef}
         images={images}
         animDuration={1000}
+        imgProps={{
+          objectFit: "scale-down",
+        }}
       />
     </div>
   );

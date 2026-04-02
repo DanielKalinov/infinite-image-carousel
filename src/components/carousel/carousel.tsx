@@ -2,6 +2,7 @@ import {
   useEffect,
   useRef,
   useState,
+  type CSSProperties,
   type RefObject,
   type WheelEvent,
 } from "react";
@@ -15,6 +16,7 @@ type CarouselProps = {
   bullets?: boolean;
   slideOnScroll?: boolean;
   animDuration?: number;
+  imgProps?: CSSProperties;
 };
 
 export default function CarouselWrapper(props: CarouselProps) {
@@ -31,6 +33,7 @@ function Carousel({
   bullets = true,
   slideOnScroll = true,
   animDuration = 500,
+  imgProps,
 }: CarouselProps) {
   const { currentIndex, isTransitioning, setCurrentIndex, setIsTransitioning } =
     useCarousel();
@@ -116,7 +119,7 @@ function Carousel({
             }}
           >
             {images.map(({ id, download_url }) => (
-              <img key={id} src={download_url} />
+              <img key={id} src={download_url} style={imgProps} />
             ))}
           </div>
         </div>
