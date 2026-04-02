@@ -4,8 +4,10 @@ import Carousel from "./components/carousel/carousel";
 import { useImages } from "./hooks/use-images";
 
 function App() {
-  const { images } = useImages(6);
+  const { images, loading } = useImages(6);
   const containerRef = useRef<HTMLDivElement>(null);
+
+  if (loading) return <p className="centered">Loading...</p>;
 
   return (
     <div className="container" ref={containerRef}>

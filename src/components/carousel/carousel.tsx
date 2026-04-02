@@ -69,6 +69,9 @@ function Carousel({
     setCurrentIndex((prev) => prev + direction);
   }
 
+  const handleNext = () => handleCarousel(1);
+  const handlePrev = () => handleCarousel(-1);
+
   function handleTransitionEnd() {
     if (!carouselInnerRef.current) return;
 
@@ -84,9 +87,6 @@ function Carousel({
     carouselInnerRef.current.style.transition = "none";
     setIsTransitioning(false);
   }
-
-  const handleNext = () => handleCarousel(1);
-  const handlePrev = () => handleCarousel(-1);
 
   function goToSlide(index: number) {
     if (!carouselInnerRef.current || isTransitioning) return;
@@ -106,26 +106,26 @@ function Carousel({
     event.deltaY > 0 ? handlePrev() : handleNext();
   }
 
-  return (
-    images.length > 0 && (
-      <>
-        <div className="carousel no-scrollbar" onWheel={handleWheel}>
-          <div
-            ref={carouselInnerRef}
-            className="carousel-inner"
-            onTransitionEnd={handleTransitionEnd}
-            style={{
-              transform: `translateX(${windowWidth && -windowWidth * currentIndex}px)`,
-            }}
-          >
-            {images.map(({ id, download_url }) => (
-              <img key={id} src={download_url} style={imgProps} />
-            ))}
-          </div>
-        </div>
+  if (!images.length) return <p className="centered">No images fetched.</p>;
 
-        {bullets && <Bullets length={images.length} goToSlide={goToSlide} />}
-      </>
-    )
+  return (
+    <>
+      <div className="carousel no-scrollbar" onWheel={handleWheel}>
+        <div
+          ref={carouselInnerRef}
+          className="carousel-inner"
+          onTransitionEnd={handleTransitionEnd}
+          style={{
+            transform: `translateX(${windowWidth && -windowWidth * currentIndex}px)`,
+          }}
+        >
+          {images.map(({ id, download_url }) => (
+            <img key={id} src={download_url} style={imgProps} />
+          ))}
+        </div>
+      </div>
+
+      {bullets && <Bullets length={images.length} goToSlide={goToSlide} />}
+    </>
   );
 }
