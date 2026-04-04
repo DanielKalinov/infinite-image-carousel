@@ -98,12 +98,19 @@ function Carousel({
     setCurrentIndex(index);
   }
 
+  const debounceRef = useRef<number | null>(null);
+
   function handleWheel(event: WheelEvent<HTMLDivElement>) {
     if (!slideOnScroll || isTransitioning) return;
 
-    setIsTransitioning(true);
+    if (debounceRef.current) {
+      clearTimeout(debounceRef.current);
+    }
 
-    event.deltaY > 0 ? handlePrev() : handleNext();
+    debounceRef.current = window.setTimeout(() => {
+      setIsTransitioning(true);
+      event.deltaY > 0 ? handlePrev() : handleNext();
+    }, 15);
   }
 
   if (!images.length) return <p className="centered">No images fetched.</p>;
