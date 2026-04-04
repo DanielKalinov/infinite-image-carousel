@@ -35,11 +35,11 @@ function Carousel({
   animDuration = 500,
   imgProps,
 }: CarouselProps) {
-  const { currentIndex, isTransitioning, setCurrentIndex, setIsTransitioning } =
-    useCarousel();
+  const { currentIndex, setCurrentIndex } = useCarousel();
   const [windowWidth, setWindowWidth] = useState<number | undefined>(undefined);
 
   const carouselInnerRef = useRef<HTMLDivElement | null>(null);
+  const isTransitioningRef = useRef(false);
 
   useEffect(() => {
     // Capture initial width on mount
@@ -62,7 +62,7 @@ function Carousel({
   function handleCarousel(direction: 1 | -1) {
     if (!carouselInnerRef.current) return;
 
-    setIsTransitioning(true);
+    isTransitioningRef.current = true;
 
     // Enable transition for the move
     carouselInnerRef.current.style.transition = `transform ${animDuration}ms ease-in-out`;
@@ -85,13 +85,13 @@ function Carousel({
     }
 
     carouselInnerRef.current.style.transition = "none";
-    setIsTransitioning(false);
+    isTransitioningRef.current = false;
   }
 
   function goToSlide(index: number) {
-    if (!carouselInnerRef.current || isTransitioning) return;
+    if (!carouselInnerRef.current || isTransitioningRef.current) return;
 
-    setIsTransitioning(true);
+    isTransitioningRef.current = true;
 
     carouselInnerRef.current.style.transition = `transform ${animDuration}ms ease-in-out`;
 
@@ -101,14 +101,14 @@ function Carousel({
   const debounceRef = useRef<number | null>(null);
 
   function handleWheel(event: WheelEvent<HTMLDivElement>) {
-    if (!slideOnScroll || isTransitioning) return;
+    if (!slideOnScroll || isTransitioningRef.current) return;
 
     if (debounceRef.current) {
       clearTimeout(debounceRef.current);
     }
 
     debounceRef.current = window.setTimeout(() => {
-      setIsTransitioning(true);
+      isTransitioningRef.current = true;
       event.deltaY > 0 ? handlePrev() : handleNext();
     }, 35);
   }

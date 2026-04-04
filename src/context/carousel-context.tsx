@@ -9,9 +9,7 @@ import React, {
 
 interface CarouselContextType {
   currentIndex: number;
-  isTransitioning: boolean;
   setCurrentIndex: Dispatch<SetStateAction<number>>;
-  setIsTransitioning: Dispatch<SetStateAction<boolean>>;
 }
 
 const CarouselContext = createContext<CarouselContextType | undefined>(
@@ -22,13 +20,10 @@ export const CarouselProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
   const [currentIndex, setCurrentIndex] = useState(1);
-  const [isTransitioning, setIsTransitioning] = useState(false);
 
   const value: CarouselContextType = {
     currentIndex,
-    isTransitioning,
     setCurrentIndex,
-    setIsTransitioning,
   };
 
   return (
