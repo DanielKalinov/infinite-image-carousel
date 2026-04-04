@@ -110,7 +110,7 @@ function Carousel({
     debounceRef.current = window.setTimeout(() => {
       setIsTransitioning(true);
       event.deltaY > 0 ? handlePrev() : handleNext();
-    }, 15);
+    }, 35);
   }
 
   if (!images.length) return <p className="centered">No images fetched.</p>;
