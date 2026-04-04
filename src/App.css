@@ -33,12 +33,12 @@
 .carousel-bullets {
   display: flex;
   justify-content: center;
-  gap: 8px;
+  gap: 4px;
   margin-top: 16px;
 }
 
 .carousel-bullet {
-  padding: 4px;
+  padding: 8px;
   border-radius: 50%;
   cursor: pointer;
 }
@@ -48,14 +48,16 @@
   height: 8px;
   background-color: gray;
   border-radius: 50%;
+  transition: all 0.2s ease-in-out;
 }
 
 .carousel-bullet:hover .carousel-bullet-inner:not(.active) {
-  background-color: brown;
+  background-color: darkgray;
 }
 
 .carousel-bullet-inner.active {
-  background-color: red;
+  background-color: black;
+  transform: scale(1.5);
 }
 
 .centered {
