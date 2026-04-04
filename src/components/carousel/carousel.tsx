@@ -17,6 +17,7 @@ type CarouselProps = {
   bullets?: boolean;
   slideOnScroll?: boolean;
   draggable?: boolean;
+  dragThreshold?: number;
   animDuration?: number;
   imgProps?: CSSProperties;
 };
@@ -35,6 +36,7 @@ function Carousel({
   bullets = true,
   slideOnScroll = true,
   draggable = true,
+  dragThreshold = 0.1,
   animDuration = 500,
   imgProps,
 }: CarouselProps) {
@@ -82,7 +84,7 @@ function Carousel({
     if (!isDragging) return;
     setIsDragging(false);
 
-    const threshold = (windowWidth || 0) * 0.1; // 10% swipe threshold
+    const threshold = (windowWidth || 0) * dragThreshold;
 
     if (Math.abs(dragOffset) > threshold) {
       if (dragOffset > 0) {
