@@ -5,6 +5,7 @@ import {
   type CSSProperties,
   type RefObject,
   type WheelEvent,
+  type PointerEvent,
 } from "react";
 import Bullets from "./bullets";
 import { CarouselProvider, useCarousel } from "../../context/carousel-context";
@@ -15,6 +16,7 @@ type CarouselProps = {
   images: Image[];
   bullets?: boolean;
   slideOnScroll?: boolean;
+  draggable?: boolean;
   animDuration?: number;
   imgProps?: CSSProperties;
 };
@@ -32,11 +34,17 @@ function Carousel({
   images = [],
   bullets = true,
   slideOnScroll = true,
+  draggable = true,
   animDuration = 500,
   imgProps,
 }: CarouselProps) {
   const { currentIndex, setCurrentIndex } = useCarousel();
   const [windowWidth, setWindowWidth] = useState<number | undefined>(undefined);
+
+  // --- Dragging State ---
+  const [dragOffset, setDragOffset] = useState(0);
+  const [isDragging, setIsDragging] = useState(false);
+  const startXRef = useRef(0);
 
   const carouselInnerRef = useRef<HTMLDivElement | null>(null);
   const isTransitioningRef = useRef(false);
@@ -47,19 +55,58 @@ function Carousel({
 
     const handleResize = () =>
       setWindowWidth(containerRef?.current?.clientWidth);
-
     window.addEventListener("resize", handleResize);
-
     return () => window.removeEventListener("resize", handleResize);
   }, [containerRef]);
+
+  // --- Pointer Handlers ---
+  const onPointerDown = (e: PointerEvent) => {
+    if (!draggable || isTransitioningRef.current) return;
+    setIsDragging(true);
+    startXRef.current = e.clientX;
+
+    // Disable transitions during drag
+    if (carouselInnerRef.current) {
+      carouselInnerRef.current.style.transition = "none";
+    }
+  };
+
+  const onPointerMove = (e: PointerEvent) => {
+    if (!isDragging) return;
+    const currentX = e.clientX;
+    const diff = currentX - startXRef.current;
+    setDragOffset(diff);
+  };
+
+  const onPointerUp = () => {
+    if (!isDragging) return;
+    setIsDragging(false);
+
+    const threshold = (windowWidth || 0) * 0.1; // 10% swipe threshold
+
+    if (Math.abs(dragOffset) > threshold) {
+      if (dragOffset > 0) {
+        handlePrev();
+      } else {
+        handleNext();
+      }
+    } else {
+      // Snap back to current slide if threshold not met
+      if (carouselInnerRef.current) {
+        carouselInnerRef.current.style.transition = `transform ${animDuration}ms ease-in-out`;
+      }
+    }
+
+    setDragOffset(0);
+  };
 
   function handleCarousel(direction: 1 | -1) {
     if (!carouselInnerRef.current) return;
 
     isTransitioningRef.current = true;
 
-    // Enable transition for the move
     carouselInnerRef.current.style.transition = `transform ${animDuration}ms ease-in-out`;
+
     setCurrentIndex((prev) => prev + direction);
   }
 
@@ -98,16 +145,13 @@ function Carousel({
 
   function goToSlide(index: number) {
     if (!carouselInnerRef.current || isTransitioningRef.current) return;
-
     isTransitioningRef.current = true;
-
     carouselInnerRef.current.style.transition = `transform ${animDuration}ms ease-in-out`;
-
     setCurrentIndex(index);
   }
 
   function handleWheel(event: WheelEvent<HTMLDivElement>) {
-    if (!slideOnScroll || isTransitioningRef.current) return;
+    if (!slideOnScroll || isTransitioningRef.current || isDragging) return;
 
     isTransitioningRef.current = true;
 
@@ -116,19 +160,39 @@ function Carousel({
 
   if (!images.length) return <p className="centered">No images fetched.</p>;
 
+  // Calculate total translation
+  const baseOffset = windowWidth ? -windowWidth * currentIndex : 0;
+  const totalTransform = baseOffset + dragOffset;
+
   return (
     <>
-      <div className="carousel no-scrollbar" onWheel={handleWheel}>
+      <div
+        className="carousel no-scrollbar"
+        onWheel={handleWheel}
+        style={{
+          cursor: isDragging ? "grabbing" : "grab",
+          touchAction: "none",
+        }}
+        onPointerDown={onPointerDown}
+        onPointerMove={onPointerMove}
+        onPointerUp={onPointerUp}
+        onPointerLeave={onPointerUp}
+      >
         <div
           ref={carouselInnerRef}
           className="carousel-inner"
           onTransitionEnd={handleTransitionEnd}
           style={{
-            transform: `translateX(${windowWidth && -windowWidth * currentIndex}px)`,
+            transform: `translateX(${totalTransform}px)`,
           }}
         >
           {images.map(({ id, download_url }) => (
-            <img key={id} src={download_url} style={imgProps} />
+            <img
+              key={id}
+              src={download_url}
+              style={imgProps}
+              draggable={false}
+            />
           ))}
         </div>
       </div>
