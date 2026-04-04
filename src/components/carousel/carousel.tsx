@@ -53,12 +53,6 @@ function Carousel({
     return () => window.removeEventListener("resize", handleResize);
   }, [containerRef]);
 
-  useEffect(() => {
-    if (carouselInnerRef.current) {
-      carouselInnerRef.current.style.transform = `translateX(-${windowWidth && windowWidth * currentIndex}px)`;
-    }
-  }, [currentIndex]);
-
   function handleCarousel(direction: 1 | -1) {
     if (!carouselInnerRef.current) return;
 
@@ -75,16 +69,30 @@ function Carousel({
   function handleTransitionEnd() {
     if (!carouselInnerRef.current) return;
 
-    // Reset jump logic
+    let newIndex = currentIndex;
+
     if (currentIndex === 0) {
       // Jump from cloned-last to real-last
-      setCurrentIndex(images.length - 2);
+      newIndex = images.length - 2;
     } else if (currentIndex === images.length - 1) {
       // Jump from cloned-first to real-first
-      setCurrentIndex(1);
+      newIndex = 1;
     }
 
-    carouselInnerRef.current.style.transition = "none";
+    // If we need to jump
+    if (newIndex !== currentIndex) {
+      // 1. Disable transitions immediately
+      carouselInnerRef.current.style.transition = "none";
+
+      // 2. Teleport the DOM element instantly
+      const offset = windowWidth && windowWidth * newIndex;
+      carouselInnerRef.current.style.transform = `translateX(-${offset}px)`;
+
+      // 3. Update state so React knows where we are for the NEXT render
+      // Use a functional update to ensure we have the right value
+      setCurrentIndex(newIndex);
+    }
+
     isTransitioningRef.current = false;
   }
 
@@ -98,19 +106,12 @@ function Carousel({
     setCurrentIndex(index);
   }
 
-  const debounceRef = useRef<number | null>(null);
-
   function handleWheel(event: WheelEvent<HTMLDivElement>) {
     if (!slideOnScroll || isTransitioningRef.current) return;
 
-    if (debounceRef.current) {
-      clearTimeout(debounceRef.current);
-    }
+    isTransitioningRef.current = true;
 
-    debounceRef.current = window.setTimeout(() => {
-      isTransitioningRef.current = true;
-      event.deltaY > 0 ? handlePrev() : handleNext();
-    }, 35);
+    event.deltaY > 0 ? handlePrev() : handleNext();
   }
 
   if (!images.length) return <p className="centered">No images fetched.</p>;
