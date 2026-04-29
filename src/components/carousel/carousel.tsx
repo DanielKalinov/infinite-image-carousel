@@ -188,12 +188,13 @@ function Carousel({
             transform: `translateX(${totalTransform}px)`,
           }}
         >
-          {images.map(({ id, download_url }) => (
+          {images.map(({ id, author, download_url }) => (
             <img
               key={id}
               src={download_url}
               style={imgProps}
               draggable={false}
+              alt={`Photo by ${author}`}
             />
           ))}
         </div>
